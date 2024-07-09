@@ -1,0 +1,33 @@
+version: '3.9'
+
+services:
+  couchbase:
+    image: couchbase:latest
+    ports:
+      - "8091-8096:8091-8096"
+      - "11210:11210"
+    environment:
+      - COUCHBASE_ADMINISTRATOR_USERNAME=malicaki-admin
+      - COUCHBASE_ADMINISTRATOR_PASSWORD=BhKbMo17:D
+    volumes:
+      - couchbase_data:/opt/couchbase/var
+
+  todo-app:
+    image: todo-app:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - COUCHBASE_CONNECTION_STRING=couchbase
+      - COUCHBASE_HOST=couchbase
+      - COUCHBASE_USERNAME=malicaki-admin
+      - COUCHBASE_PASSWORD=BhKbMo17:D
+      - COUCHBASE_BUCKET_NAME=todo-app
+    depends_on:
+      - couchbase
+
+volumes:
+  couchbase_data:
