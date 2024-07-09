@@ -7,8 +7,8 @@ services:
       - "8091-8096:8091-8096"
       - "11210:11210"
     environment:
-      COUCHBASE_ADMINISTRATOR_USERNAME: malicaki-admin
-      COUCHBASE_ADMINISTRATOR_PASSWORD: BhKbMo17:D
+      COUCHBASE_ADMINISTRATOR_USERNAME: your-admin-username
+      COUCHBASE_ADMINISTRATOR_PASSWORD: your-password
     volumes:
       - "couchbase_data:/opt/couchbase/var"
 
@@ -21,8 +21,8 @@ services:
       ["8080:8080"]
     environment:
       COUCHBASE_HOST: couchbase://localhost
-      COUCHBASE_USERNAME: malicaki-admin
-      COUCHBASE_PASSWORD: BhKbMo17:D
+      COUCHBASE_USERNAME: your-username
+      COUCHBASE_PASSWORD: your-password
       COUCHBASE_BUCKET_NAME: todo-app
     depends_on: [couchbase]
 
