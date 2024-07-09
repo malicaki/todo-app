@@ -21,7 +21,7 @@ public class TodoValidator {
         if (todoDto.getDescription() == null || todoDto.getDescription().isBlank()) {
             errors.add("Please fill the description");
         }
-        if (todoDto.getCategory() == null || todoDto.getCategory().getId() == null) {
+        if (todoDto.getCategoryId() == null) {
             errors.add("Please select a category");
         }
         return errors;

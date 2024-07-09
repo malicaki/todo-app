@@ -10,5 +10,6 @@ import java.util.Optional;
 public interface UserRepository extends CouchbaseRepository<User, Long> {
     Optional<User> findUserByEmail(String email);
 
+    Optional<User> findUserByUserName(String username);
 }
 

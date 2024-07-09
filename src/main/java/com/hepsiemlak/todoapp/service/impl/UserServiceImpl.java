@@ -1,31 +1,38 @@
 package com.hepsiemlak.todoapp.service.impl;
 
+import com.hepsiemlak.todoapp.dto.JWTAuthenticationResponse;
+import com.hepsiemlak.todoapp.dto.LoginDto;
+import com.hepsiemlak.todoapp.dto.RefreshTokenDto;
 import com.hepsiemlak.todoapp.dto.UserDto;
 import com.hepsiemlak.todoapp.exception.EntityNotFoundException;
 import com.hepsiemlak.todoapp.exception.ErrorCodes;
 import com.hepsiemlak.todoapp.exception.InvalidEntityException;
 import com.hepsiemlak.todoapp.model.User;
 import com.hepsiemlak.todoapp.repository.UserRepository;
+import com.hepsiemlak.todoapp.service.abs.JWTService;
 import com.hepsiemlak.todoapp.service.abs.UserService;
 import com.hepsiemlak.todoapp.validator.UserValidator;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JWTService jwtService;
+    private final CustomUserDetailsService userDetailsService;
 
     @Override
     public UserDto save(UserDto user) {
@@ -38,7 +45,6 @@ public class UserServiceImpl implements UserService {
         userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
         return UserDto.fromEntity(userRepository.save(userEntity));
     }
-
 
     @Override
     public List<UserDto> findAll() {
@@ -67,16 +73,50 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto login(UserDto user) {
-        List<String> errors = UserValidator.validateUserCredentials(user.getEmail(), user.getPassword());
+    public JWTAuthenticationResponse login(LoginDto user) {
+        List<String> errors = UserValidator.validateUserCredentials(user.getUsername(), user.getPassword());
         if (!errors.isEmpty()) {
             throw new InvalidEntityException("User is not valid", ErrorCodes.USER_NOT_VALID, errors);
         }
-        User foundUser = userRepository.findUserByEmail(user.getEmail())
-                .orElseThrow(() -> new EntityNotFoundException("No user found with Email = " + user.getEmail(), ErrorCodes.USER_NOT_FOUND));
+
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
+
+        User foundUser = userRepository.findUserByUserName(user.getUsername())
+                .orElseThrow(() -> new EntityNotFoundException("No user found with name = " + user.getUsername(), ErrorCodes.USER_NOT_FOUND));
         if (!passwordEncoder.matches(user.getPassword(), foundUser.getPassword())) {
-            throw new EntityNotFoundException("Invalid password for Email = " + user.getEmail(), ErrorCodes.USER_NOT_FOUND);
+            throw new EntityNotFoundException("Invalid password for user = " + user.getUsername(), ErrorCodes.USER_NOT_FOUND);
         }
-        return UserDto.fromEntity(foundUser);
+
+        String jwt = jwtService.generateToken(foundUser);
+        String refreshToken = jwtService.generateRefreshToken(new HashMap<>(), foundUser);
+
+        JWTAuthenticationResponse jwtAuthenticationResponse = new JWTAuthenticationResponse();
+        jwtAuthenticationResponse.setToken(jwt);
+        jwtAuthenticationResponse.setRefreshToken(refreshToken);
+
+        return jwtAuthenticationResponse;
+    }
+
+    @Override
+    public JWTAuthenticationResponse refreshToken(RefreshTokenDto refreshTokenDto) {
+        String username = jwtService.extractUserName(refreshTokenDto.getRefreshToken());
+
+        User foundUser = userRepository.findUserByUserName(username)
+                .orElseThrow(() -> new EntityNotFoundException("No user found with username = " + username, ErrorCodes.USER_NOT_FOUND));
+
+
+        if (jwtService.isTokenValid(refreshTokenDto.getRefreshToken(), foundUser)) {
+            String jwt = jwtService.generateToken(foundUser);
+
+            JWTAuthenticationResponse jwtAuthenticationResponse = new JWTAuthenticationResponse();
+            jwtAuthenticationResponse.setToken(jwt);
+            jwtAuthenticationResponse.setRefreshToken(refreshTokenDto.getRefreshToken());
+
+            return jwtAuthenticationResponse;
+
+
+        }
+
+        return null;
     }
 }

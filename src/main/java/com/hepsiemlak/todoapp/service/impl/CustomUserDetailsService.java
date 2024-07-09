@@ -1,3 +1,5 @@
+package com.hepsiemlak.todoapp.service.impl;
+
 import com.hepsiemlak.todoapp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,7 +19,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        return userRepository.findUserByEmail(username)
+        return userRepository.findUserByUserName(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 }

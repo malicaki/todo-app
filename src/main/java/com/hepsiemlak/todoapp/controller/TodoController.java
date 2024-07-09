@@ -7,24 +7,20 @@ import com.hepsiemlak.todoapp.service.abs.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
-@CrossOrigin(origins = "*", maxAge = 3600)
 public class TodoController implements TodoApi {
 
     @Autowired
     private TodoService todoService;
 
-    @Autowired
-    private CategoryService categoryService;
-
     @Override
-    public ResponseEntity<TodoDto> createTodo(TodoDto userDto) {
-        return new ResponseEntity<>(todoService.save(userDto), HttpStatus.CREATED);
+    public ResponseEntity<TodoDto> createTodo(TodoDto todoDto) {
+        return new ResponseEntity<>(todoService.save(todoDto), HttpStatus.CREATED);
     }
 
     @Override

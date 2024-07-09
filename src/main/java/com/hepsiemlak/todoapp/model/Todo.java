@@ -34,5 +34,5 @@ public class Todo {
     private boolean favorite;
 
     @Field
-    private Category category;
+    private Long categoryId;
 }

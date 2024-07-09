@@ -30,8 +30,11 @@ public class UserDto {
     private List<CategoryDto> category;
 
     public static User toEntity(UserDto userDto) {
-        final User user = new User();
+        if (userDto == null) {
+            return null;
+        }
 
+        final User user = new User();
         user.setId(userDto.getId());
         user.setFirstName(userDto.getFirstName());
         user.setLastName(userDto.getLastName());
@@ -45,12 +48,13 @@ public class UserDto {
         return user;
     }
 
+
     public static UserDto fromEntity(User user) {
         return UserDto.builder()
                 .id(user.getId())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
-                .userName(user.getUserName())
+                .userName(user.getUsername())
                 .password(user.getPassword())
                 .email(user.getEmail())
                 .category(

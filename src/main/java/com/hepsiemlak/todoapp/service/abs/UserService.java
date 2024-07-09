@@ -1,5 +1,8 @@
 package com.hepsiemlak.todoapp.service.abs;
 
+import com.hepsiemlak.todoapp.dto.JWTAuthenticationResponse;
+import com.hepsiemlak.todoapp.dto.LoginDto;
+import com.hepsiemlak.todoapp.dto.RefreshTokenDto;
 import com.hepsiemlak.todoapp.dto.UserDto;
 
 import java.util.List;
@@ -14,5 +17,7 @@ public interface UserService {
 
     void delete(Long id);
 
-    UserDto login(UserDto user);
+    JWTAuthenticationResponse login(LoginDto user);
+
+    JWTAuthenticationResponse refreshToken(RefreshTokenDto refreshTokenDto);
 }

@@ -30,7 +30,7 @@ public class Category{
     private String description;
 
     @Field
-    private User user;
+    private Long userId;
 
     @Field
     private List<Todo> todoList;

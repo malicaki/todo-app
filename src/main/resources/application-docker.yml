@@ -1,0 +1,6 @@
+spring:
+  couchbase:
+    connection-string: ${COUCHBASE_HOST}
+    username: ${COUCHBASE_USERNAME}
+    password: ${COUCHBASE_PASSWORD}
+    bucket-name: ${COUCHBASE_BUCKET_NAME}

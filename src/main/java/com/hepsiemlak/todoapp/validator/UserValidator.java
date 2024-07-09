@@ -37,10 +37,10 @@ public class UserValidator {
         return errors;
     }
 
-    public static List<String> validateUserCredentials(String email, String password) {
+    public static List<String> validateUserCredentials(String username, String password) {
         List<String> errors = new ArrayList<>();
-        if (email == null || email.isEmpty()) {
-            errors.add("Email is empty");
+        if (username == null || username.isEmpty()) {
+            errors.add("username is empty");
         }
         if (password == null || password.isEmpty()) {
             errors.add("Password is empty");

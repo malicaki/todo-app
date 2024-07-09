@@ -12,8 +12,9 @@ public interface CategoryRepository extends CouchbaseRepository<Category, Long> 
 
     List<Category> findCategoryByUserId(Long userId);
 
-    @Query("select t.category.id from Todo t where t.id = :todoId")
-    Long findCategoryByTodoId(Long todoId);
+    @Query("#{#n1ql.selectEntity} WHERE ANY t IN todoList SATISFIES t.id = $todoId END AND #{#n1ql.filter}")
+    Category findCategoryByTodoId(@Param("todoId") Long todoId);
 
-    @Query("select c from Category c inner join Todo t on t.category.id = c.id where t.startDate >= :startDate and t.startDate <= :endDate and c.user.id = :userId")
-    List<Category> getAllTodoByCategoriesForToday(@Param("startDate") ZonedDateTime startDate, @Param("endDate") ZonedDateTime endDate, @Param("userId")Long userId);}
+    @Query("#{#n1ql.selectEntity} WHERE #{#n1ql.filter} AND ANY t IN todoList SATISFIES t.startDate >= $startDate AND t.startDate <= $endDate END AND user.id = $userId")
+    List<Category> getAllTodoByCategoriesForToday(@Param("startDate") ZonedDateTime startDate, @Param("endDate") ZonedDateTime endDate, @Param("userId") Long userId);
+}

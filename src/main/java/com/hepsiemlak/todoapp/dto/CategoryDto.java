@@ -21,20 +21,27 @@ public class CategoryDto {
 
     private String description;
 
-    private UserDto user;
+    private Long userId;
 
     private List<TodoDto> todoList;
 
     public static Category toEntity(CategoryDto categoryDto) {
-        Category category = new Category();
+        if (categoryDto == null) {
+            return null;
+        }
 
-        category.setUser(UserDto.toEntity(categoryDto.getUser()));
+        final Category category = new Category();
         category.setId(categoryDto.getId());
         category.setName(categoryDto.getName());
         category.setDescription(categoryDto.getDescription());
+        category.setUserId(categoryDto.getUserId());
+        category.setTodoList(
+                categoryDto.getTodoList() != null ? categoryDto.getTodoList().stream().map(TodoDto::toEntity).collect(Collectors.toList()) : null
+        );
 
         return category;
     }
+
 
     public static CategoryDto fromEntity(Category category) {
         return CategoryDto.builder()

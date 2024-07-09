@@ -26,20 +26,25 @@ public class TodoDto {
 
     private boolean favorite;
 
-    private CategoryDto category;
+    private Long categoryId;
 
     public static Todo toEntity(TodoDto todoDto) {
+        if (todoDto == null) {
+            return null;
+        }
+
         final Todo todo = new Todo();
         todo.setId(todoDto.getId());
         todo.setTitle(todoDto.getTitle());
         todo.setDescription(todoDto.getDescription());
         todo.setDone(todoDto.isDone());
         todo.setFavorite(todoDto.isFavorite());
-        todo.setStartDate(ZonedDateTime.now());
-        todo.setCategory(CategoryDto.toEntity(todoDto.getCategory()));
+        todo.setStartDate(todoDto.getStartDate() != null ? todoDto.getStartDate() : ZonedDateTime.now());
+        todo.setCategoryId(todoDto.getCategoryId());
 
         return todo;
     }
+
 
     public static TodoDto fromEntity(Todo todo) {
         return TodoDto.builder()

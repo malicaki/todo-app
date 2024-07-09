@@ -49,19 +49,16 @@ public class TodoServiceImpl implements TodoService {
     @Override
     public TodoDto findById(Long id) {
         if (id == null) {
-            log.error("User id is null");
+            log.error("Todo id is null");
             return null;
         }
-        final Long categoryId = categoryRepository.findCategoryByTodoId(id);
-        Category category = new Category();
-        category.setId(categoryId);
+        final Category category = categoryRepository.findCategoryByTodoId(id);
 
         final Optional<Todo> todo = todoRepository.findById(id);
-        todo.ifPresent(value -> value.setCategory(category));
+        todo.ifPresent(value -> value.setCategoryId(category.getId()));
 
         final TodoDto todoDto = TodoDto.fromEntity(todo.get());
-        CategoryDto categoryDto = CategoryDto.fromEntity(category);
-        todoDto.setCategory(categoryDto);
+        todoDto.setCategoryId(category.getId());
 
         return Optional.of(todoDto).
                 orElseThrow(() -> new EntityNotFoundException("No Todo found with ID = " + id, ErrorCodes.USER_NOT_FOUND));
