@@ -59,7 +59,7 @@ Open your browser and navigate to `http://localhost:8080/swagger-ui.html`.
 - Then login with /login url that user. (Passwords are stored in encrypted form)
 ![img_1.png](img/img_1.png)
 - And get access token of the user.
-- ![img_2.png](img/img_2.png)
+ ![img_2.png](img/img_2.png)
 - Authorize swagger with access token
 ![img_4.png](img/img_4.png)
 ![img_3.png](img/img_3.png)
@@ -80,6 +80,8 @@ mvn test
 
 1. **Build and Run the Docker images:**
 
+- Update the Couchbase connection details in `compose.yml`
+  
 ```bash
 docker compose up --build
 ```
