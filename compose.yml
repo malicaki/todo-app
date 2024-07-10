@@ -2,29 +2,35 @@ version: '3.8'
 
 services:
   couchbase:
-    image: couchbase:latest
+    image: couchbase
+    build:
+      context: .
+      dockerfile: src/main/couchbase/Dockerfile
     ports:
       - "8091-8096:8091-8096"
-      - "11210:11210"
+      - "11210-11211:11210-11211"
     environment:
-      COUCHBASE_ADMINISTRATOR_USERNAME: your-admin-username
-      COUCHBASE_ADMINISTRATOR_PASSWORD: your-password
-    volumes:
-      - "couchbase_data:/opt/couchbase/var"
+      - COUCHBASE_ADMINISTRATOR_USERNAME=malicaki-admin
+      - COUCHBASE_ADMINISTRATOR_PASSWORD=BhKbMo17:D
+      - COUCHBASE_BUCKET=todo-app
+      - COUCHBASE_BUCKET_PASSWORD=BhKbMo17:D
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8091/pools || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
 
   todo-app:
-    image: todo-app:latest
+    image: todo-app
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      ["8080:8080"]
+      - "8080:8080"
     environment:
-      COUCHBASE_HOST: couchbase://localhost
-      COUCHBASE_USERNAME: your-username
-      COUCHBASE_PASSWORD: your-password
-      COUCHBASE_BUCKET_NAME: todo-app
-    depends_on: [couchbase]
-
-volumes:
-  couchbase_data:
+      - COUCHBASE_HOST=couchbase
+      - COUCHBASE_BUCKET=todo-app
+      - COUCHBASE_BUCKET_PASSWORD=BhKbMo17:D
+    depends_on:
+      couchbase:
+        condition: service_healthy

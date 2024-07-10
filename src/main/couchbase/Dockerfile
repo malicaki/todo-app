@@ -1,4 +1,8 @@
-FROM ubuntu:latest
-LABEL authors="malic"
+# Dockerfile
+FROM couchbase:latest
 
-ENTRYPOINT ["top", "-b"]
+# Copy the configuration script
+COPY src/main/couchbase/configure.sh /opt/couchbase/configure.sh
+
+# Run the configuration script
+CMD ["/bin/bash", "/opt/couchbase/configure.sh"]
