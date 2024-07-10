@@ -84,8 +84,9 @@ mvn test
 docker compose up --build
 ```
 
-***PS: Some extra features like 'Lists of all categories and ToDos for Today' has some bugs. It will be fixed soon via update***
-
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+
+***PS: Some extra features like 'Lists of all categories and ToDos for Today' has some bugs. It will be fixed soon via update***
